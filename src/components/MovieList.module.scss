@@ -1,7 +1,17 @@
-.movieRow {
+.movieTypes {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 90vw;
   margin: auto;
+
+  &__list {
+    display: flex;
+  }
+}
+
+.active {
+  border: 5px solid red;
+  
 }

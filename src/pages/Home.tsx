@@ -26,6 +26,7 @@ const Home = () => {
     };
     getAllMovies();
   }, []);
+console.log(allMovies);
 
   return (
     <>
