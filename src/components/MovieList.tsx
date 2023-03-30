@@ -24,6 +24,8 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
     Year: "",
   });
 
+  const [keyboardIsTouched, setKeyboardIsTouched] = useState(false);
+  // let keyboardIsTouched = false;
   const [modalOpen, setModalOpen] = useState(false);
 
   const movieTypesRef = useRef<HTMLUListElement>(null);
@@ -34,6 +36,10 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (!keyboardIsTouched) {
+        setKeyboardIsTouched(true);
+      }
+
       switch (event.code) {
         case "ArrowUp": //  arrow up key
           setNavigation((navigation) =>
@@ -120,20 +126,23 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
     setModalOpen(false);
   };
 
+  console.log(fetchTypes);
+
   return (
     <>
       <MovieModal modalIsOpen={modalOpen} foundMovie={selectedMovie} />
 
       <ul className={classes.movieTypes} ref={movieTypesRef} tabIndex={0}>
-        {fetchTypes.map((movieType, rowIndex) => (
+        {fetchTypes?.map((movieType, rowIndex) => (
           <ul className={classes["movieTypes__row"]} key={rowIndex}>
-            {movieType.movies.map((movie: Movie, columnIndex: number) => (
+            {movieType.movies?.map((movie: Movie, columnIndex: number) => (
               <MovieItem
                 poster={movie.Poster}
                 key={columnIndex}
                 active={
                   navigation.column === columnIndex &&
-                  navigation.row === rowIndex
+                  navigation.row === rowIndex &&
+                  keyboardIsTouched === true
                 }
               />
             ))}
