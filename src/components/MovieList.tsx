@@ -70,13 +70,16 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
   return (
     <ul className={classes.movieTypes}>
       {fetchTypes.map((movieType, rowIndex) => (
-        <li key={rowIndex} className={navigation.row === rowIndex ? classes.active : ""}>
+        <li key={rowIndex}>
           <ul className={classes["movieTypes__list"]}>
             {movieType.movies.map((movie: Movie, columnIndex: number) => (
               <MovieItem
                 poster={movie.Poster}
                 key={columnIndex}
-                active={navigation.column === rowIndex * 10 + columnIndex}
+                active={
+                  navigation.column === columnIndex &&
+                  navigation.row === rowIndex
+                }
               />
             ))}
           </ul>

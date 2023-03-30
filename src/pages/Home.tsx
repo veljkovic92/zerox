@@ -5,7 +5,7 @@ import { FetchTypes } from "../types/types";
 
 const Home = () => {
   const [allMovies, setAllMovies] = useState<FetchTypes>([]);
-
+  //napravi input koji ce da uzima input values odvojene zarezima i na submit taster da se sve salje u newMovies i renderuje nova list u zavisnosti od dodatih stvari u input-u
   useEffect(() => {
     const getAllMovies = async () => {
       try {
@@ -26,10 +26,11 @@ const Home = () => {
     };
     getAllMovies();
   }, []);
-console.log(allMovies);
+  console.log(allMovies);
 
   return (
     <>
+      <input />
       <MovieList fetchTypes={allMovies} />
     </>
   );

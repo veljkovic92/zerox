@@ -5,6 +5,7 @@
   align-items: center;
   width: 90vw;
   margin: auto;
+  overflow: scroll;
 
   &__list {
     display: flex;

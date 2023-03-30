@@ -1,7 +1,7 @@
 .movieItem {
   display: flex;
-  height: 200px;
-  width: 400px;
+  height: 150px;
+  width: calc(90vw / 6);
   overflow: hidden;
   img {
     width: 100%;
