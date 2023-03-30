@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Modal } from "react-bootstrap";
 import { FetchTypes, Movie } from "../types/types";
+import MovieModal from "./Modal";
 import MovieItem from "./MovieItem";
 import classes from "./MovieList.module.scss";
 
@@ -12,16 +14,23 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
   const [navigation, setNavigation] = useState<Navigation>({
     row: 0,
     column: 0,
-  }); // activeIndex state to keep track of which movie item is currently active
+  });
 
-  const [modalOpen, setModalOpen] = useState(false); // modalOpen state to keep track of whether the modal is currently open or not
-  const movieTypesRef = useRef<HTMLUListElement>(null); // useRef hook to set initial focus
+  const [selectedMovie, setSelectedMovie] = useState<Movie>({
+    Title: "",
+    imdbID: "",
+    Poster: "",
+    Type: "",
+    Year: "",
+  });
+
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const movieTypesRef = useRef<HTMLUListElement>(null);
 
   const movieTypesWidth = movieTypesRef.current?.offsetWidth || 0;
   const movieWidth = (movieTypesWidth - 5 * 10) / 6;
   const [currentMovieWidth, setCurrentMovieWidth] = useState(movieWidth);
-  console.log("width " + movieTypesWidth);
-  console.log("movie width " + movieWidth);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -60,6 +69,10 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
           break;
         case "Enter": // enter key
           setModalOpen(true);
+          const foundMovie =
+            fetchTypes[navigation.row].movies[navigation.column];
+          setSelectedMovie(foundMovie);
+
           break;
         default:
           break;
@@ -74,9 +87,9 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      setModalOpen(false);
     };
   }, [navigation, fetchTypes]);
-  console.log(currentMovieWidth);
 
   useEffect(() => {
     if (navigation.column > 0) {
@@ -84,7 +97,7 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
     } else if (navigation.column === 0) {
       setCurrentMovieWidth(movieWidth);
     }
-  }, [navigation]);
+  }, [navigation, movieWidth]);
 
   useEffect(() => {
     if (navigation.column > 5) {
@@ -98,28 +111,36 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
         behavior: "smooth",
       });
     }
-  }, [currentMovieWidth]);
-
+  }, [currentMovieWidth, movieWidth, navigation.column]);
+  // napravi istu logiku ali za gore-dole
+  // napravi modal behaviour
+  // napravi input sa keywords
+  //
   const handleModalClose = () => {
     setModalOpen(false);
   };
 
   return (
-    <ul className={classes.movieTypes} ref={movieTypesRef} tabIndex={0}>
-      {fetchTypes.map((movieType, rowIndex) => (
-        <ul className={classes["movieTypes__row"]} key={rowIndex}>
-          {movieType.movies.map((movie: Movie, columnIndex: number) => (
-            <MovieItem
-              poster={movie.Poster}
-              key={columnIndex}
-              active={
-                navigation.column === columnIndex && navigation.row === rowIndex
-              }
-            />
-          ))}
-        </ul>
-      ))}
-    </ul>
+    <>
+      <MovieModal modalIsOpen={modalOpen} foundMovie={selectedMovie} />
+
+      <ul className={classes.movieTypes} ref={movieTypesRef} tabIndex={0}>
+        {fetchTypes.map((movieType, rowIndex) => (
+          <ul className={classes["movieTypes__row"]} key={rowIndex}>
+            {movieType.movies.map((movie: Movie, columnIndex: number) => (
+              <MovieItem
+                poster={movie.Poster}
+                key={columnIndex}
+                active={
+                  navigation.column === columnIndex &&
+                  navigation.row === rowIndex
+                }
+              />
+            ))}
+          </ul>
+        ))}
+      </ul>
+    </>
   );
 };
 
