@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import MovieList from "../components/MovieList";
 import { getMovies } from "../fetchData/getData";
 import { FetchTypes } from "../types/types";
+import classes from "./Home.module.scss"
 
 const Home = () => {
   const [allMovies, setAllMovies] = useState<FetchTypes>([]);
@@ -29,10 +30,10 @@ const Home = () => {
   console.log(allMovies);
 
   return (
-    <>
+    <div className={classes.home}>
       <input />
       <MovieList fetchTypes={allMovies} />
-    </>
+    </div>
   );
 };
 
