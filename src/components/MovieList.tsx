@@ -36,16 +36,20 @@ const MovieList = ({
   const movieTypesRef = useRef<HTMLUListElement>(null);
 
   const movieTypesWidth = movieTypesRef.current?.offsetWidth || 0;
+  const movieTypesHeight = movieTypesRef.current?.offsetHeight || 0;
 
   const movieWidth =
     movieTypesWidth > 500
       ? (movieTypesWidth - 5 * 10) / 6
       : movieTypesWidth - 10;
 
+  const movieHeight = (movieTypesHeight - 2 * 20) / 3;
+
   const [currentMovieWidth, setCurrentMovieWidth] = useState(movieWidth);
+  const [currentMovieHeight, setCurrentMovieHeight] = useState(movieWidth);
+
   const [x, setX] = useState("");
   const [y, setY] = useState("");
-  console.log(x);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -99,7 +103,13 @@ const MovieList = ({
 
           break;
         case "Enter": // enter key
-          setModalOpen(true);
+          
+          if (document.activeElement?.id !== "form_control") {
+            setModalOpen(true);
+          } else {
+            document.getElementById("form_button")?.click();
+          }
+
           const foundMovie =
             fetchTypes[navigation.row].movies[navigation.column];
           setSelectedMovie(foundMovie);
@@ -129,21 +139,38 @@ const MovieList = ({
       setCurrentMovieWidth(movieWidth);
     }
 
-    
-
-  }, [navigation, movieWidth]);
+    if (navigation.row > 0) {
+      setCurrentMovieHeight((navigation.row + 1) * movieHeight);
+    } else if (navigation.row === 0) {
+      setCurrentMovieHeight(movieHeight);
+    }
+  }, [navigation, movieWidth, movieHeight]);
 
   useEffect(() => {
     if (movieTypesWidth > 500) {
-      if (navigation.column > 5) {
+      if (navigation.column > 5 && x === "increased") {
         movieTypesRef.current?.scrollBy({
           left: movieWidth + 15,
           behavior: "smooth",
         });
-      } else if (navigation.column < 4) {
+      } else if (navigation.column < 4 && x === "decreased") {
         movieTypesRef.current?.scrollBy({
           left: -movieWidth - 15,
           behavior: "smooth",
+        });
+      }
+
+      if (navigation.row === 0 && y === "decreased") {
+        movieTypesRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
+      } else if (navigation.row === 2 && y === "increased") {
+        movieTypesRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+          inline: "nearest",
         });
       }
     } else {
@@ -158,8 +185,29 @@ const MovieList = ({
           behavior: "smooth",
         });
       }
+
+      if (navigation.row === 0 && y === "decreased") {
+        movieTypesRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
+      } else if (navigation.row === 2 && y === "increased") {
+        movieTypesRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+          inline: "nearest",
+        });
+      }
     }
-  }, [currentMovieWidth, movieWidth, navigation.column]);
+  }, [
+    currentMovieWidth,
+    currentMovieHeight,
+    movieWidth,
+    movieHeight,
+    navigation.column,
+    navigation.row,
+  ]);
 
   return (
     <div className={classes.movieList}>
@@ -174,7 +222,7 @@ const MovieList = ({
           <ul
             className={classes["movieList__movieTypes__row"]}
             key={rowIndex}
-            id={`$rowList{rowIndex}`}
+            id={rowIndex.toString()}
           >
             {movieType.movies?.map((movie: Movie, columnIndex: number) => (
               <MovieItem

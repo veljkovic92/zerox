@@ -45,8 +45,6 @@ const Home = () => {
     getAllMovies();
   }, []);
 
-  console.log();
-
   return (
     <div className={classes.home}>
       <h1>Movie Schack</h1>
@@ -55,10 +53,10 @@ const Home = () => {
           onChange={(e) => {
             setSearch(e.target.value);
           }}
-          placeholder="Find your movie"
+          placeholder="Find your genre"
           id="form_control"
         />
-        <Button type="submit" onClick={searchMovie} variant="danger">
+        <Button type="submit" onClick={searchMovie} variant="danger" id="form_button">
           Search
         </Button>
       </section>

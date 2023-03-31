@@ -1,0 +1,37 @@
+.modal {
+  text-align: center;
+
+  &__header {
+    background-color: red;
+    border-bottom: 0;
+
+    &__title {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  &__footer {
+    display: flex !important;
+    justify-content: space-evenly !important;
+    align-items: center !important;
+
+    &--release {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: red;
+    }
+
+    &__actions {
+      display: flex;
+      gap: 10px;
+    }
+  }
+}
