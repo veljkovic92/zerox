@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal } from "react-bootstrap";
 import { FetchTypes, Movie } from "../types/types";
 import MovieModal from "./Modal";
 import MovieItem from "./MovieItem";
@@ -10,7 +9,13 @@ type Navigation = {
   column: number;
 };
 
-const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
+const MovieList = ({
+  fetchTypes,
+  searchValue,
+}: {
+  fetchTypes: FetchTypes;
+  searchValue: boolean;
+}) => {
   const [navigation, setNavigation] = useState<Navigation>({
     row: 0,
     column: 0,
@@ -25,7 +30,7 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
   });
 
   const [keyboardIsTouched, setKeyboardIsTouched] = useState(false);
-  // let keyboardIsTouched = false;
+
   const [modalOpen, setModalOpen] = useState(false);
 
   const movieTypesRef = useRef<HTMLUListElement>(null);
@@ -36,12 +41,11 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!keyboardIsTouched) {
-        setKeyboardIsTouched(true);
-      }
-
       switch (event.code) {
         case "ArrowUp": //  arrow up key
+          if (!keyboardIsTouched) {
+            setKeyboardIsTouched(true);
+          }
           setNavigation((navigation) =>
             navigation.row > 0
               ? { ...navigation, row: navigation.row - 1 }
@@ -50,6 +54,9 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
           break;
 
         case "ArrowDown": //  arrow down key
+          if (!keyboardIsTouched) {
+            setKeyboardIsTouched(true);
+          }
           setNavigation((navigation) =>
             navigation.row < fetchTypes.length - 1
               ? { ...navigation, row: navigation.row + 1 }
@@ -58,6 +65,9 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
           break;
 
         case "ArrowLeft": // left arrow key
+          if (!keyboardIsTouched) {
+            setKeyboardIsTouched(true);
+          }
           setNavigation((navigation) =>
             navigation.column > 0
               ? { ...navigation, column: navigation.column - 1 }
@@ -66,6 +76,9 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
 
           break;
         case "ArrowRight": // right arrow key
+          if (!keyboardIsTouched) {
+            setKeyboardIsTouched(true);
+          }
           setNavigation((navigation) =>
             navigation.column < fetchTypes[navigation.row].movies.length - 1
               ? { ...navigation, column: navigation.column + 1 }
@@ -118,26 +131,22 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
       });
     }
   }, [currentMovieWidth, movieWidth, navigation.column]);
-  // napravi istu logiku ali za gore-dole
-  // napravi modal behaviour
-  // napravi input sa keywords
-  //
-  const handleModalClose = () => {
-    setModalOpen(false);
-  };
-
-  console.log(fetchTypes);
 
   return (
-    <>
+    <div className={classes.movieList}>
       <MovieModal modalIsOpen={modalOpen} foundMovie={selectedMovie} />
-
-      <ul className={classes.movieTypes} ref={movieTypesRef} tabIndex={0}>
+      <h2>{searchValue ? "Your Movies: " : "Recommended For You:"}</h2>
+      <ul
+        className={classes["movieList__movieTypes"]}
+        ref={movieTypesRef}
+        tabIndex={0}
+      >
         {fetchTypes?.map((movieType, rowIndex) => (
-          <ul className={classes["movieTypes__row"]} key={rowIndex}>
+          <ul className={classes["movieList__movieTypes__row"]} key={rowIndex}>
             {movieType.movies?.map((movie: Movie, columnIndex: number) => (
               <MovieItem
                 poster={movie.Poster}
+                title={movie.Title}
                 key={columnIndex}
                 active={
                   navigation.column === columnIndex &&
@@ -149,7 +158,7 @@ const MovieList = ({ fetchTypes }: { fetchTypes: FetchTypes }) => {
           </ul>
         ))}
       </ul>
-    </>
+    </div>
   );
 };
 

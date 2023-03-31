@@ -1,22 +1,28 @@
-.movieTypes {
-  display: flex;
-  flex-direction: column;
-  margin: auto;
-  overflow: hidden;
-  gap: 30px;
-  padding: 0;
-  outline: none;
-
-  &__row {
+.movieList {
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  &__movieTypes {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    margin: auto;
+    overflow: hidden;
+    gap: 30px;
     padding: 0;
-    min-width: fit-content;
+    outline: none;
+
+    &__row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 0;
+      min-width: fit-content;
+    }
   }
 }
-
 .active {
   border: 5px solid red;
 }
