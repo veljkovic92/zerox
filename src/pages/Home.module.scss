@@ -27,3 +27,11 @@
     }
   }
 }
+
+@media (max-width: 600px) {
+  .home__search {
+    input {
+      width: 50%;
+    }
+  }
+}

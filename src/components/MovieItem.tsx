@@ -10,10 +10,8 @@ const MovieItem = ({
   title: string;
   active: boolean;
 }) => {
-  
-
   return (
-    <div className={`${classes.movieItem} ${active ? classes.active : ""}`} >
+    <div className={`${classes.movieItem} ${active ? classes.active : ""}`}>
       <img
         src={poster}
         onError={(e) => {

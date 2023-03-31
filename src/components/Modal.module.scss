@@ -14,7 +14,7 @@
   &__body {
     display: flex;
     flex-direction: column;
-    padding: 0;
+    padding: 0 !important;
   }
 
   &__footer {
@@ -33,5 +33,15 @@
       display: flex;
       gap: 10px;
     }
+  }
+}
+
+@media (max-width: 600px) {
+  .modal {
+    width: 80vw !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
   }
 }

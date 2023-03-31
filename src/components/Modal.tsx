@@ -21,7 +21,7 @@ function MovieModal({
 
   return (
     <>
-      <Modal show={show} onHide={handleClose} className={classes.modal}>
+      <Modal show={show} onHide={handleClose} className={classes.modal} centered >
         <Modal.Header closeButton className={classes["modal__header"]}>
           <Modal.Title className={classes["modal__header__title"]}>
             <h2>{foundMovie.Title}</h2>

@@ -36,9 +36,7 @@ const Home = () => {
       );
 
       setAllMovies(newMovies);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -56,7 +54,12 @@ const Home = () => {
           placeholder="Find your genre"
           id="form_control"
         />
-        <Button type="submit" onClick={searchMovie} variant="danger" id="form_button">
+        <Button
+          type="submit"
+          onClick={searchMovie}
+          variant="danger"
+          id="form_button"
+        >
           Search
         </Button>
       </section>

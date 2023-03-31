@@ -1,5 +1,4 @@
 .movieList {
-  
   h2 {
     text-align: center;
     margin-bottom: 20px;
@@ -7,7 +6,7 @@
   }
   &__movieTypes {
     display: flex;
-    
+
     flex-direction: column;
     margin: auto;
     overflow: hidden;

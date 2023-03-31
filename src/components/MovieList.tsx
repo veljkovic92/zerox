@@ -103,7 +103,6 @@ const MovieList = ({
 
           break;
         case "Enter": // enter key
-          
           if (document.activeElement?.id !== "form_control") {
             setModalOpen(true);
           } else {
