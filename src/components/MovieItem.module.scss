@@ -45,4 +45,19 @@
   .movieItem {
     min-height: unset;
   }
+
+  .active {
+    border: 5px solid red;
+  }
+}
+
+@media (max-width: 600px) {
+  .movieItem {
+    min-height: unset;
+    width: calc((100vw - 100px - 10px) / 1);
+  }
+
+  .active {
+    border: 5px solid red;
+  }
 }

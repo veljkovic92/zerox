@@ -36,8 +36,16 @@ const MovieList = ({
   const movieTypesRef = useRef<HTMLUListElement>(null);
 
   const movieTypesWidth = movieTypesRef.current?.offsetWidth || 0;
-  const movieWidth = (movieTypesWidth - 5 * 10) / 6;
+
+  const movieWidth =
+    movieTypesWidth > 500
+      ? (movieTypesWidth - 5 * 10) / 6
+      : movieTypesWidth - 10;
+
   const [currentMovieWidth, setCurrentMovieWidth] = useState(movieWidth);
+  const [x, setX] = useState("");
+  const [y, setY] = useState("");
+  console.log(x);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -46,6 +54,7 @@ const MovieList = ({
           if (!keyboardIsTouched) {
             setKeyboardIsTouched(true);
           }
+          setY("decreased");
           setNavigation((navigation) =>
             navigation.row > 0
               ? { ...navigation, row: navigation.row - 1 }
@@ -57,6 +66,7 @@ const MovieList = ({
           if (!keyboardIsTouched) {
             setKeyboardIsTouched(true);
           }
+          setY("increased");
           setNavigation((navigation) =>
             navigation.row < fetchTypes.length - 1
               ? { ...navigation, row: navigation.row + 1 }
@@ -68,6 +78,7 @@ const MovieList = ({
           if (!keyboardIsTouched) {
             setKeyboardIsTouched(true);
           }
+          setX("decreased");
           setNavigation((navigation) =>
             navigation.column > 0
               ? { ...navigation, column: navigation.column - 1 }
@@ -79,6 +90,7 @@ const MovieList = ({
           if (!keyboardIsTouched) {
             setKeyboardIsTouched(true);
           }
+          setX("increased");
           setNavigation((navigation) =>
             navigation.column < fetchTypes[navigation.row].movies.length - 1
               ? { ...navigation, column: navigation.column + 1 }
@@ -116,19 +128,36 @@ const MovieList = ({
     } else if (navigation.column === 0) {
       setCurrentMovieWidth(movieWidth);
     }
+
+    
+
   }, [navigation, movieWidth]);
 
   useEffect(() => {
-    if (navigation.column > 5) {
-      movieTypesRef.current?.scrollBy({
-        left: movieWidth + 10,
-        behavior: "smooth",
-      });
-    } else if (navigation.column < 4) {
-      movieTypesRef.current?.scrollBy({
-        left: -movieWidth - 10,
-        behavior: "smooth",
-      });
+    if (movieTypesWidth > 500) {
+      if (navigation.column > 5) {
+        movieTypesRef.current?.scrollBy({
+          left: movieWidth + 15,
+          behavior: "smooth",
+        });
+      } else if (navigation.column < 4) {
+        movieTypesRef.current?.scrollBy({
+          left: -movieWidth - 15,
+          behavior: "smooth",
+        });
+      }
+    } else {
+      if (x === "increased") {
+        movieTypesRef.current?.scrollBy({
+          left: movieWidth + 10,
+          behavior: "smooth",
+        });
+      } else if (x === "decreased") {
+        movieTypesRef.current?.scrollBy({
+          left: -movieWidth - 10,
+          behavior: "smooth",
+        });
+      }
     }
   }, [currentMovieWidth, movieWidth, navigation.column]);
 
@@ -142,7 +171,11 @@ const MovieList = ({
         tabIndex={0}
       >
         {fetchTypes?.map((movieType, rowIndex) => (
-          <ul className={classes["movieList__movieTypes__row"]} key={rowIndex}>
+          <ul
+            className={classes["movieList__movieTypes__row"]}
+            key={rowIndex}
+            id={`$rowList{rowIndex}`}
+          >
             {movieType.movies?.map((movie: Movie, columnIndex: number) => (
               <MovieItem
                 poster={movie.Poster}
