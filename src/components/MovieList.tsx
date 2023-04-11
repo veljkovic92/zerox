@@ -47,9 +47,6 @@ const MovieList = ({
       ? (movieTypesWidth - 5 * 10) / 6
       : movieTypesWidth - 10;
 
-  console.log("movie row width: " + movieTypesWidth);
-  console.log("movie width: " + movieWidth);
-
   const movieHeight = (movieTypesHeight - 2 * 20) / 3;
 
   const [currentMovieWidth, setCurrentMovieWidth] = useState(movieWidth);
@@ -193,15 +190,12 @@ const MovieList = ({
       }
     } else {
       if (x === "increased") {
-        movieTypesRef.current?.scrollBy({
-          left: movieWidth + 10,
-          behavior: "smooth",
-        });
+        if (endReached) return;
+        movieTypesRef.current!.children[navigation.row].scrollLeft +=
+          movieTypesRef.current!.offsetWidth - 10 + 10;
       } else if (x === "decreased") {
-        movieTypesRef.current?.scrollBy({
-          left: -movieWidth - 10,
-          behavior: "smooth",
-        });
+        movieTypesRef.current!.children[navigation.row].scrollLeft -=
+          movieTypesRef.current!.offsetWidth - 10 + 10;
       }
 
       if (navigation.row === 0 && y === "decreased") {
