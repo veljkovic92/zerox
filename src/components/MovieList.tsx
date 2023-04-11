@@ -21,6 +21,12 @@ const MovieList = ({
     column: 0,
   });
 
+  const [yIndex, setYIndex] = useState({
+    index0: 0,
+    index1: 0,
+    index2: 0,
+  });
+
   const [selectedMovie, setSelectedMovie] = useState<Movie>({
     Title: "",
     imdbID: "",
@@ -28,8 +34,6 @@ const MovieList = ({
     Type: "",
     Year: "",
   });
-
-  const [keyboardIsTouched, setKeyboardIsTouched] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -43,6 +47,9 @@ const MovieList = ({
       ? (movieTypesWidth - 5 * 10) / 6
       : movieTypesWidth - 10;
 
+  console.log("movie row width: " + movieTypesWidth);
+  console.log("movie width: " + movieWidth);
+
   const movieHeight = (movieTypesHeight - 2 * 20) / 3;
 
   const [currentMovieWidth, setCurrentMovieWidth] = useState(movieWidth);
@@ -51,38 +58,44 @@ const MovieList = ({
   const [x, setX] = useState("");
   const [y, setY] = useState("");
 
+  const [endReached, setEndReached] = useState(false);
+
+  type ObjectKey = keyof typeof yIndex;
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       switch (event.code) {
         case "ArrowUp": //  arrow up key
-          if (!keyboardIsTouched) {
-            setKeyboardIsTouched(true);
-          }
+          let myIndex = `index${navigation.row - 1}` as ObjectKey;
           setY("decreased");
           setNavigation((navigation) =>
             navigation.row > 0
-              ? { ...navigation, row: navigation.row - 1 }
+              ? { column: yIndex[myIndex], row: navigation.row - 1 }
               : navigation
           );
           break;
 
         case "ArrowDown": //  arrow down key
-          if (!keyboardIsTouched) {
-            setKeyboardIsTouched(true);
-          }
           setY("increased");
+          let myIndex2 = `index${navigation.row + 1}` as ObjectKey;
           setNavigation((navigation) =>
             navigation.row < fetchTypes.length - 1
-              ? { ...navigation, row: navigation.row + 1 }
+              ? { column: yIndex[myIndex2], row: navigation.row + 1 }
               : navigation
           );
           break;
 
         case "ArrowLeft": // left arrow key
-          if (!keyboardIsTouched) {
-            setKeyboardIsTouched(true);
-          }
           setX("decreased");
+          setYIndex((prevVal) => {
+            if (navigation.column === 0) {
+              return prevVal;
+            }
+            return {
+              ...prevVal,
+              [`index${navigation.row}`]: navigation.column - 1,
+            };
+          });
           setNavigation((navigation) =>
             navigation.column > 0
               ? { ...navigation, column: navigation.column - 1 }
@@ -91,10 +104,16 @@ const MovieList = ({
 
           break;
         case "ArrowRight": // right arrow key
-          if (!keyboardIsTouched) {
-            setKeyboardIsTouched(true);
-          }
           setX("increased");
+          setYIndex((prevVal) => {
+            if (navigation.column === 9) {
+              return prevVal;
+            }
+            return {
+              ...prevVal,
+              [`index${navigation.row}`]: navigation.column + 1,
+            };
+          });
           setNavigation((navigation) =>
             navigation.column < fetchTypes[navigation.row].movies.length - 1
               ? { ...navigation, column: navigation.column + 1 }
@@ -129,7 +148,7 @@ const MovieList = ({
       document.removeEventListener("keydown", handleKeyDown);
       setModalOpen(false);
     };
-  }, [navigation, fetchTypes]);
+  }, [navigation, fetchTypes, yIndex]);
 
   useEffect(() => {
     if (navigation.column > 0) {
@@ -144,19 +163,19 @@ const MovieList = ({
       setCurrentMovieHeight(movieHeight);
     }
   }, [navigation, movieWidth, movieHeight]);
+  // scroll za pojedinacni ul element ne radi. Samo za sve ul u okviru parent-a
 
   useEffect(() => {
+    const widthOfPadding = movieTypesRef.current!.offsetWidth - movieTypesWidth;
+    console.log(widthOfPadding);
     if (movieTypesWidth > 500) {
-      if (navigation.column > 5 && x === "increased") {
-        movieTypesRef.current?.scrollBy({
-          left: movieWidth + 15,
-          behavior: "smooth",
-        });
-      } else if (navigation.column < 4 && x === "decreased") {
-        movieTypesRef.current?.scrollBy({
-          left: -movieWidth - 15,
-          behavior: "smooth",
-        });
+      if (x === "increased") {
+        if (endReached) return;
+        movieTypesRef.current!.children[navigation.row].scrollLeft +=
+          (movieTypesRef.current!.offsetWidth - 5 * 10) / 6 + 10;
+      } else if (x === "decreased") {
+        movieTypesRef.current!.children[navigation.row].scrollLeft -=
+          (movieTypesRef.current!.offsetWidth - 5 * 10) / 6 + 10;
       }
 
       if (navigation.row === 0 && y === "decreased") {
@@ -199,14 +218,29 @@ const MovieList = ({
         });
       }
     }
+    return () => {
+      setX("");
+    };
   }, [
+    x,
+    y,
+    movieTypesWidth,
     currentMovieWidth,
     currentMovieHeight,
     movieWidth,
     movieHeight,
     navigation.column,
     navigation.row,
+    endReached,
   ]);
+
+  useEffect(() => {
+    if (navigation.column === 9) {
+      setEndReached(true);
+    } else {
+      setEndReached(false);
+    }
+  }, [navigation.column]);
 
   return (
     <div className={classes.movieList}>
@@ -218,24 +252,25 @@ const MovieList = ({
         tabIndex={0}
       >
         {fetchTypes?.map((movieType, rowIndex) => (
-          <ul
-            className={classes["movieList__movieTypes__row"]}
+          <div
+            className={classes["movieList__movieTypes__parentRow"]}
             key={rowIndex}
             id={rowIndex.toString()}
           >
-            {movieType.movies?.map((movie: Movie, columnIndex: number) => (
-              <MovieItem
-                poster={movie.Poster}
-                title={movie.Title}
-                key={columnIndex}
-                active={
-                  navigation.column === columnIndex &&
-                  navigation.row === rowIndex &&
-                  keyboardIsTouched === true
-                }
-              />
-            ))}
-          </ul>
+            <ul className={classes["movieList__movieTypes__parentRow__row"]}>
+              {movieType.movies?.map((movie: Movie, columnIndex: number) => (
+                <MovieItem
+                  poster={movie.Poster}
+                  title={movie.Title}
+                  key={columnIndex}
+                  active={
+                    navigation.column === columnIndex &&
+                    navigation.row === rowIndex
+                  }
+                />
+              ))}
+            </ul>
+          </div>
         ))}
       </ul>
     </div>

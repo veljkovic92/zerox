@@ -14,13 +14,20 @@
     padding: 0;
     outline: none;
 
-    &__row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      padding: 0;
-      min-width: fit-content;
+    &__parentRow {
+      overflow: auto;
+      width: 100%;
+
+      &__row {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+        padding: 0;
+        min-width: fit-content;
+
+        padding-right: calc(100vw - 100px);
+      }
     }
   }
 }
