@@ -160,11 +160,8 @@ const MovieList = ({
       setCurrentMovieHeight(movieHeight);
     }
   }, [navigation, movieWidth, movieHeight]);
-  // scroll za pojedinacni ul element ne radi. Samo za sve ul u okviru parent-a
 
   useEffect(() => {
-    const widthOfPadding = movieTypesRef.current!.offsetWidth - movieTypesWidth;
-    console.log(widthOfPadding);
     if (movieTypesWidth > 500) {
       if (x === "increased") {
         if (endReached) return;
